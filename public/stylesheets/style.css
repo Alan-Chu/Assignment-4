@@ -1,0 +1,44 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+
+h1, h3{
+	text-align: center;
+}
+
+.pagehead{
+	/*display: table-cell;*/
+	margin-top: -50px;
+	background: linear-gradient(to bottom right, #b2ec79 , #95c6f3);
+	height: 100px;
+	line-height: 100px;
+}
+
+.container{
+	margin-top: 20px;
+}
+
+.footer{
+	text-align: center;
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	height: 40px;
+	background-color: #95c6f3;
+	line-height: 40px;
+}
+
+p{
+	font-size: 20px;
+}
+
+.cartTable {
+	height: 350px;
+	overflow: scroll;
+}

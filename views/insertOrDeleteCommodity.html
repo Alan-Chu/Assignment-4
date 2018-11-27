@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Add/Delete Commodity</title>
+    <link rel="stylesheet" type="text/css"  href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css"  href="stylesheets/style.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+	<script type="text/javascript">
+		var commodityModule = angular.module('commodity', []);
+		commodityModule.controller('commodityController', ($scope, $http, $location)=>{
+			$scope.addCommodity = function (argument) {
+				url = '/commoditys';
+				var config = {
+					headers : {
+						'Accept': 'application/json'
+					}
+				};
+				var data = {
+					name: $scope.name,
+					price: $scope.price,
+					note: $scope.note
+				};
+				$http.post(url,JSON.stringify(data), config).then(function (response){
+						$scope.postMsg= response.data;
+						alert('yes');
+					}, function (response){
+						$scope.postErrMsg = "Error Status: " +  response.statusText;
+					});
+			};
+
+			$scope.deleteCommodity = function (argument) {
+				url = '/commoditys/' + $scope.deleteName;
+				$http.delete(url).then(function(response){
+					alert(response.data.message);
+				}, function(response){
+					alert("fail to delete");
+				});
+			};
+		});
+	</script>
+</head>
+<body class="text-center">
+	<div class="pagehead">
+		<h1>Add/Delete Commodities Page</h1>
+		<h3>You can add or delete Commodities here</h3>
+	</div>
+	
+	<div class="container" ng-app="commodity">
+		<div class="row" ng-controller="commodityController">
+			<div class="col-md-10">
+				<table class="table table-hover text-center">
+					<caption>Add</caption>
+					<form ng-submit="addCommodity()">
+						<tr>
+							<td>Commodity Name</td>
+							<td><input ng-model="name" type="text" name="name"></td>
+						</tr>
+						<tr>
+							<td>Commodity Price</td>
+							<td><input ng-model="price" type="text" name="price"></td>
+						</tr>
+						<tr>
+							<td>Commodity Note</td>
+							<td><input ng-model="note" type="text" name="note"></td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<button type="submit" value="Submit" class="btn btn-default">Submit</button>
+							</td>
+						</tr>
+					</form>
+				</table>
+				<table class="table table-hover text-center">
+					<caption>Delete</caption>
+					<form ng-submit="deleteCommodity()">
+						<tr>
+							<td>Commodity Name</td>
+							<td><input type="text" name="deleteName" ng-model="deleteName"></td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<button type="submit" value="Submit" class="btn btn-default">Submit</button>
+							</td>
+						</tr>
+					</form>
+				</table>
+			</div>
+			<div class="col-md-2">
+				<ul>
+					<li><a href="/">Commodity List</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	
+	<div class="footer">
+		<footer>Power By <strong>Alan Chu @2018 PITT</strong></footer>
+	</div>
+</body>
+</html>

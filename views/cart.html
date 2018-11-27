@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Shopping Cart</title>
+    <link rel="stylesheet" type="text/css"  href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css"  href="stylesheets/style.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+	<script type="text/javascript">
+		var cartModule = angular.module('cart', []);
+		cartModule.controller('cartController', ($scope, $http, $location) =>{
+			var url = "/carts";
+			$http.get(url).then((response) => {
+				$scope.cart = response.data;
+			}, (response) => {
+				$scope.getErrMsg = "Error Status: " +  response.statusText;
+			});
+
+			$scope.addOne = function(name){
+				angular.forEach($scope.cart, function(each){
+					if (each.name === name) {
+						each.amount++;
+						$scope.sum
+					}
+				})
+			};
+
+			$scope.minusOne = function(name){
+				angular.forEach($scope.cart, function(each){
+					if (each.name === name && each.amount>1) {
+						each.amount--;
+					}
+				})
+			};
+
+			$scope.getSum = function(){
+				var sum = 0;
+				angular.forEach($scope.cart, function(each){
+					sum += each.price * each.amount;
+				});
+				return sum.toFixed(2);
+			};
+
+			$scope.deleteByName = function(name){
+				if(confirm("Are you sure to remove "+name+"?")){
+					$http.delete(url+"/"+name).then(function(response){
+						$http.get(url).then((response) => {
+							$scope.cart = response.data;
+						}, (response) => {
+							$scope.getErrMsg = "Error Status: " +  response.statusText;
+						});
+					}, function(response){
+						alert('delete fail');
+					});
+				};
+			};
+		});
+		// cartModule.controller('deleteController', ())
+		// cartModule.controller('addController', ($scope, $http, $location) => {
+		// 	$scope.addOne = function(){
+		// 		angular.foreach($scope.cart, function())
+		// 	}
+		// })
+	</script>
+</head>
+<body class="text-center">
+	<div class="pagehead">
+		<h1>Shopping Cart</h1>
+		<h3>In this page you can work on your shopping cart.</h3>
+	</div>
+	
+	<div class="container" ng-app="cart">
+		<div class="row" ng-controller="cartController">
+			<div class="col-md-10">
+				<div class="cartTable">
+					<table class="table table-hover text-center" ng-show="cart.length">
+						<caption>Shopping Cart</caption>
+						<tr class="text-center">
+							<th>Name</th>
+							<th>Price</th>
+							<th>Amount</th>
+							<th>Add</th>
+							<th>Minus</th>
+							<th>Delete</th>
+						</tr>
+						<tr ng-repeat="product in cart">
+							<td>{{product.name}}</td>
+							<td>{{product.price}}</td>
+							<td>{{product.amount}}</td>
+							<td><span class="glyphicon glyphicon-plus" ng-click=addOne(product.name)></span></td>
+							<td><span class="glyphicon glyphicon-minus" ng-click=minusOne(product.name)></span></td>
+							<td><button type="button" ng-click=deleteByName(product.name) value="Delete" class="btn btn-default">Delete</button></td>
+						</tr>
+					</table>
+				</div>
+				<br>
+				<p>You need to pay <span style="color: red; font-style: italic;">${{getSum()}}</span> for all.</p>
+			</div>
+			<div class="col-md-2">
+				<ul>
+					<li><a href="/">Commodity List</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+
+	<div class="footer">
+		<footer>Power By <strong>Alan Chu @2018 PITT</strong></footer>
+	</div>
+</body>
+</html>

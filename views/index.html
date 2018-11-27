@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Commodities List</title>
+    <link rel="stylesheet" type="text/css"  href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css"  href="stylesheets/style.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+	<script type="text/javascript">
+		var commodityModule = angular.module('commodity', []);
+		commodityModule.controller('commodityController', ($scope, $http, $location)=>{
+			var url = '/commoditys';
+
+			// $http.get(url).then((response)=>{
+			// 	$scope.commoditys = response.data;
+			// }, (response)=>{
+			// 	$scope.getErrMsg = "Error Status: " +  response.statusText;
+			// });
+
+			$http.get(url).then((response)=>{
+				$scope.commoditys = response.data;
+			}, (response)=>{
+				$scope.getErrMsg = "Error Status: " +  response.statusText;
+			});
+
+			$scope.addToCart = function(Name, Price, Amount){
+				var url = "/carts";
+				var config = {
+	                headers : {
+	                    'Accept': 'application/json'
+	                }
+	        	};
+	        	var data = {
+		            name: Name,
+		            price: Price,
+		            amount: Amount,
+		        };
+		        var existAmount = 1;
+
+		        $http.get("/carts/"+Name).then((response)=>{
+					$scope.exist = response.data.Exist;
+					if ($scope.exist) {alert('This one is already in your cart.');}
+					else {
+						$http.post(url, JSON.stringify(data), config).then((response)=>{
+							alert("success")
+						}, (response) => {
+							$scope.postErrMsg = "Error Status: " +  response.statusText;
+						});
+					}
+				}, (response)=>{
+					$scope.postErrMsg = "Error Status: " +  response.statusText;
+				});
+
+		  //       $http.post(url, JSON.stringify(data), config).then((response) => {
+				// 	alert("success")
+				// }, (response) => {
+				// 	$scope.postErrMsg = "Error Status: " +  response.statusText;
+				// });
+			};
+		});
+	</script>
+</head>
+<body>
+	<div class="pagehead">
+		<h1>Commodities List</h1>
+		<h3>This page shows all the commodities in store.</h3>
+	</div>
+	<div class="container" ng-app="commodity">
+		<div class="row">
+			<div class="col-md-10 cartTable" ng-controller="commodityController">
+				<table class="table table-hover text-center" ng-show="commoditys.length">
+					<caption>Commodities In Store</caption>
+					<tr class="text-center">
+						<th>Name</th>
+						<th>Price</th>
+						<th>Note</th>
+						<th>Add To Cart</th>
+					</tr>
+					<tr ng-repeat="commodity in commoditys">
+						<td>{{commodity.name}}</td>
+						<td>{{commodity.price}}</td>
+						<td>{{commodity.note}}</td>
+						<td><span ng-click="addToCart(commodity.name,commodity.price,'1')" class="glyphicon glyphicon-plus"></span></td>
+					</tr>
+				</table>
+			</div>
+			<div class="col-md-2">
+				<ul>
+					<li><a href="cart">Shoppint Cart</a></li>
+					<li><a href="insertOrDeleteCommodity">Add/Delete Commodities</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+
+	<div class="footer">
+		<footer>Power By <strong>Alan Chu @2018 PITT</strong></footer>
+	</div>
+</body>
+</html>
